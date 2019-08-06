@@ -7,6 +7,10 @@
 // Crea los CPT al activar el plugin
 add_action('init', 'kfp_cpt_ideas', 10);
 add_action('init', 'kfp_cpt_votos', 15);
+
+// Inlcuye los ficheros necesarios
+$ruta_plugin = plugin_dir_path(__FILE__);
+include_once($ruta_plugin . "include/form-propuesta-idea.php");
  
 /**
  * Crea el CPT Ideas
