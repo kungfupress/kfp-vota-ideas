@@ -4,6 +4,9 @@
  * Plugin Author: KungFuPress
  */
 
+defined( 'ABSPATH' ) or die();
+
+
 // Crea los CPT al activar el plugin
 add_action('init', 'kfp_cpt_ideas', 10);
 add_action('init', 'kfp_cpt_votos', 15);
