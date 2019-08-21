@@ -25,7 +25,6 @@ function Kfp_Vti_Idea_list()
             $html .= '<tr><td><b>'. get_the_title() . '</b>'; // Importante lo del get_
             $html .= '<br>' . get_the_content() .'</td>';
             $html .= '<td nowrap>5 votos - <a href="">Votar</a></td></tr>';
-            wp_reset_postdata(); // Esto es para no fastidiar el loop principal del sitio
         }
         $html .= '</table>';
     } else { 
