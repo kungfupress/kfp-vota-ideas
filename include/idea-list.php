@@ -24,7 +24,7 @@ function Kfp_Vti_Idea_list()
             $the_query->the_post();
             $html .= '<tr><td><b>'. get_the_title() . '</b>'; // Importante lo del get_
             $html .= '<br>' . get_the_content() .'</td>';
-            $html .= '<td width="25%">5 votos - <a href="">Votar</a></td></tr>';
+            $html .= '<td nowrap>5 votos - <a href="">Votar</a></td></tr>';
             wp_reset_postdata(); // Esto es para no fastidiar el loop principal del sitio
         }
         $html .= '</table>';

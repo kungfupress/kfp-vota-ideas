@@ -84,7 +84,7 @@ function Kfp_Vti_Idea_save()
         'post_title' => filter_input(INPUT_POST, 'kfp-vti-title', FILTER_SANITIZE_STRING),
         'post_content' => filter_input(INPUT_POST, 'kfp-vti-content', FILTER_SANITIZE_STRING),
         'post_type' => 'idea',
-        'post_status' => 'draft',
+        'post_status' => 'publish',
         'comment_status' => 'closed',
         'ping_status' => 'closed'
     );
