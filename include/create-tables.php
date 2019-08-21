@@ -3,6 +3,8 @@
  * File: includde/create-tables.php 
  */
 
+defined( 'ABSPATH' ) or die();
+
 /**
  * Crea las tablas necesarias durante la activación del plugin
  *

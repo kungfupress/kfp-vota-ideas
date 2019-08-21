@@ -3,6 +3,8 @@
 * File: include/create-cpts.php 
 */
 
+defined( 'ABSPATH' ) or die();
+
 /**
  * Crea el CPT Ideas
  *

@@ -17,5 +17,6 @@ include_once($ruta_plugin . "include/create-tables.php");
 register_activation_hook(__FILE__, 'Kfp_Vti_Create_tables');
 
 // Incluye los ficheros necesarios
-include_once($ruta_plugin . "include/form-new-idea.php");
+include_once($ruta_plugin . "include/idea-add.php");
+include_once($ruta_plugin . "include/idea-list.php");
  

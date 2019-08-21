@@ -1,25 +1,25 @@
 <?php
 /** 
- * File: include/form-new-idea.php 
+ * File: include/idea-add.php 
  */
 
 defined( 'ABSPATH' ) or die();
 
 // Crea el shortcode para mostrar el formulario de propuesta de ideas
-add_shortcode('kfp_vti_idea_form', 'Kfp_Vti_Idea_form');
+add_shortcode('kfp_vti_idea_add', 'Kfp_Vti_Idea_add');
 // Agrega los action hooks para grabar el formulario (el primero para usuarios 
 // logeados y el otro para el resto)
 // Lo que viene tras admin_post_nopriv_ tiene que coincidir con el value 
 // del campo input con name "action" del formulario
-add_action("admin_post_kfp-vti-save-idea", "Kfp_Vti_Save_idea");
-add_action("admin_post_nopriv_kfp-vti-save-idea", "Kfp_Vti_Save_idea");
+add_action("admin_post_kfp-vti-idea-save", "Kfp_Vti_Idea_save");
+add_action("admin_post_nopriv_kfp-vti-idea-save", "Kfp_Vti_Idea_save");
 
 /**
  * Muestra el formulario para proponer ideas desde el frontend
  *
  * @return void
  */
-function Kfp_Vti_Form_idea()
+function Kfp_Vti_Idea_add()
 {
     global $wpdb;
     if (isset($_GET['kfp_vti_alert_text'])) {
@@ -28,9 +28,9 @@ function Kfp_Vti_Form_idea()
     ob_start();
     ?>
     <form name="idea"action="<?php echo esc_url(admin_url('admin-post.php')); ?>" 
-        method="post" id="kfp-vti-form-save-idea">
+        method="post" id="kfp-vti-form-idea-save">
         <?php wp_nonce_field('kfp-vti-form', 'kfp-vti-form-nonce'); ?>
-        <input type="hidden" name="action" value="kfp-vti-save-idea">
+        <input type="hidden" name="action" value="kfp-vti-idea-save">
         <input type="hidden" name="kfp-vti-backlink" 
             value="<?php echo home_url( add_query_arg(array())); ?>"
         <p>
@@ -56,7 +56,7 @@ function Kfp_Vti_Form_idea()
  *
  * @return void
  */
-function Kfp_Vti_Save_idea()
+function Kfp_Vti_Idea_save()
 {
     if (filter_has_var(INPUT_POST, 'kfp-vti-backlink')) {
         $backlink = filter_input(INPUT_POST, 'kfp-vti-backlink', FILTER_SANITIZE_URL);
