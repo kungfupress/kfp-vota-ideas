@@ -1,15 +1,18 @@
 <?php
+/** 
+ * File: include/form-new-idea.php 
+ */
 
 defined( 'ABSPATH' ) or die();
 
 // Crea el shortcode para mostrar el formulario de propuesta de ideas
-add_shortcode('kfp_vti_form_idea', 'Kfp_Vti_Form_idea');
+add_shortcode('kfp_vti_idea_form', 'Kfp_Vti_Idea_form');
 // Agrega los action hooks para grabar el formulario (el primero para usuarios 
 // logeados y el otro para el resto)
 // Lo que viene tras admin_post_nopriv_ tiene que coincidir con el value 
 // del campo input con name "action" del formulario
-add_action("admin_post_kfp-vti-grabar-idea", "Kfp_Vti_Grabar_idea");
-add_action("admin_post_nopriv_kfp-vti-grabar-idea", "Kfp_Vti_Grabar_idea");
+add_action("admin_post_kfp-vti-save-idea", "Kfp_Vti_Save_idea");
+add_action("admin_post_nopriv_kfp-vti-save-idea", "Kfp_Vti_Save_idea");
 
 /**
  * Muestra el formulario para proponer ideas desde el frontend
@@ -19,16 +22,16 @@ add_action("admin_post_nopriv_kfp-vti-grabar-idea", "Kfp_Vti_Grabar_idea");
 function Kfp_Vti_Form_idea()
 {
     global $wpdb;
-    if (isset($_GET['kfp_vti_texto_aviso'])) {
-        echo "<h4>" . $_GET['kfp_vti_texto_aviso'] . "</h4>";
+    if (isset($_GET['kfp_vti_alert_text'])) {
+        echo "<h4>" . $_GET['kfp_vti_alert_text'] . "</h4>";
     }
     ob_start();
     ?>
     <form name="idea"action="<?php echo esc_url(admin_url('admin-post.php')); ?>" 
-        method="post" id="kfp-vti-form-grabar-idea">
+        method="post" id="kfp-vti-form-save-idea">
         <?php wp_nonce_field('kfp-vti-form', 'kfp-vti-form-nonce'); ?>
-        <input type="hidden" name="action" value="kfp-vti-grabar-idea">
-        <input type="hidden" name="kfp-url-origen" 
+        <input type="hidden" name="action" value="kfp-vti-save-idea">
+        <input type="hidden" name="kfp-vti-backlink" 
             value="<?php echo home_url( add_query_arg(array())); ?>"
         <p>
             <label for="kfp-vti-title">Idea</label>
@@ -53,21 +56,24 @@ function Kfp_Vti_Form_idea()
  *
  * @return void
  */
-function Kfp_Vti_Grabar_idea()
+function Kfp_Vti_Save_idea()
 {
+    if (filter_has_var(INPUT_POST, 'kfp-vti-backlink')) {
+        $backlink = filter_input(INPUT_POST, 'kfp-vti-backlink', FILTER_SANITIZE_URL);
+    }
+
     if(empty($_POST['kfp-vti-title']) || empty($_POST['kfp-vti-content'])
         || !wp_verify_nonce($_POST['kfp-vti-form-nonce'], 'kfp-vti-form')) {
-        $url_origen = $_POST['kfp-url-origen'];
-        $aviso = "error";
-        $texto_aviso = "Por favor, rellena los contenidos requeridos del formulario";
+        $alert = "error";
+        $alert_text = "Por favor, rellena los contenidos requeridos del formulario";
         wp_redirect(
             esc_url_raw(
                 add_query_arg(
                     array(
-                        'kfp_vti_aviso' => $aviso,
-                        'kfp_vti_texto_aviso' => $texto_aviso,
+                        'kfp_vti_alert' => $alert,
+                        'kfp_vti_alert_text' => $alert_text,
                     ),
-                    $url_origen
+                    $backlink
                 ) 
             ) 
         );
@@ -75,27 +81,28 @@ function Kfp_Vti_Grabar_idea()
     }
 
     $args = array(
-        'post_title' => $_POST['kfp-vti-title'],
-        'post_content' => $_POST['kfp-vti-content'],
+        'post_title' => filter_input(INPUT_POST, 'kfp-vti-title', FILTER_SANITIZE_STRING),
+        'post_content' => filter_input(INPUT_POST, 'kfp-vti-content', FILTER_SANITIZE_STRING),
         'post_type' => 'idea',
-        'post_status' => 'publish',
+        'post_status' => 'draft',
         'comment_status' => 'closed',
         'ping_status' => 'closed'
     );
 
+    // Esta variable $post_id contiene el ID del nuevo registro 
+    // Nos vendría de perlas para grabar los metadatas
     $post_id = wp_insert_post($args);
 
-    $url_origen = $_POST['kfp-url-origen'];
-    $aviso = "success";
-    $texto_aviso = "Has registrado tu idea correctamente. ¡Gracias!";
+    $alert = "success";
+    $alert_text = "Has registrado tu idea correctamente. ¡Gracias!";
     wp_redirect(
         esc_url_raw(
             add_query_arg(
                 array(
-                    'kfp_vti_aviso' => $aviso,
-                    'kfp_vti_texto_aviso' => $texto_aviso,
+                    'kfp_vti_alert' => $alert,
+                    'kfp_vti_alert_text' => $alert_text,
                 ),
-                $url_origen
+                $backlink
             ) 
         ) 
     );
