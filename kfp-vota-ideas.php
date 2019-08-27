@@ -10,13 +10,13 @@ $ruta_plugin = plugin_dir_path(__FILE__);
 
 // Crea los CPT al activar el plugin
 include_once($ruta_plugin . "include/create-cpts.php");
-add_action('init', 'kfp_cpt_ideas', 10);
 
 // Crea la tabla voto al activar el plugin
-include_once($ruta_plugin . "include/create-tables.php");
-register_activation_hook(__FILE__, 'Kfp_Vti_Create_tables');
+//include_once($ruta_plugin . "include/create-tables.php");
+//register_activation_hook(__FILE__, 'Kfp_Vti_Create_tables');
+//TODO: eliminar el fichero create-tables.php
 
-// Incluye los ficheros necesarios
+// Implementa los shortcodes para añadir ideas y mostrar la lista de ideas
 include_once($ruta_plugin . "include/idea-add.php");
 include_once($ruta_plugin . "include/idea-list.php");
  
