@@ -10,26 +10,25 @@ defined( 'ABSPATH' ) or die();
 add_shortcode('kfp_vti_idea_list', 'Kfp_Vti_Idea_list');
 function Kfp_Vti_Idea_list()
 {
+    global $wpdb;
     wp_enqueue_script('kfp-vti-vote-link');
-    $args = array('post_type' => 'vti_idea', 'posts_per_page' => 30);
+    $args = array(
+        'post_type' => 'vti_idea', 
+        'posts_per_page' => 30
+    );
+    // This query get the idea's list
     $the_query = new WP_Query( $args ); 
     if ($the_query->have_posts()) { 
         $html = '<table>';
         while ($the_query->have_posts()) { 
             $the_query->the_post();
-            $parent_id = get_the_ID();
-            $children = get_children( array(
-                'post_parent' => $parent_id,
-                'post_type'   => 'vti_vote', 
-                'numberposts' => -1,
-                'post_status' => 'any' 
-            ) );
-            //print_r($children);
-            //exit();
-            $votos = count($children);
+            $post_id = get_the_ID();
+            $where = $wpdb->prepare('WHERE post_parent = %d', $post_id);
+            $votes = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->posts} {$where}");
+            
             $html .= '<tr><td><b>'. get_the_title() . '</b>'; // Importante lo del get_
             $html .= '<br>' . get_the_content() .'</td>';
-            $html .= '<td nowrap>' . $votos . ' votos - <a href="#" class="click-vote-link"';
+            $html .= '<td nowrap>' . $votes . ' votos - <a href="#" class="click-vote-link"';
             $html .= 'data-idea-id="' . get_the_ID() . '">Votar</a></td></tr>';
         }
         $html .= '</table>';
