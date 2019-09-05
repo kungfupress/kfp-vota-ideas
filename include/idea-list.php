@@ -24,9 +24,12 @@ function Kfp_Vti_Idea_list()
                 'numberposts' => -1,
                 'post_status' => 'any' 
             ) );
+            //print_r($children);
+            //exit();
+            $votos = count($children);
             $html .= '<tr><td><b>'. get_the_title() . '</b>'; // Importante lo del get_
             $html .= '<br>' . get_the_content() .'</td>';
-            $html .= '<td nowrap>' . $children->found_posts . ' votos - <a href="#" class="click-vote-link"';
+            $html .= '<td nowrap>' . $votos . ' votos - <a href="#" class="click-vote-link"';
             $html .= 'data-idea-id="' . get_the_ID() . '">Votar</a></td></tr>';
         }
         $html .= '</table>';
