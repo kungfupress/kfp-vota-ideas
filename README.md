@@ -5,4 +5,5 @@ Utiliza el shortcode [kfp_vti_idea_form] para mostrar el formulario que permite 
 
 ## Ideas y Pendiente
     [] Hacer que se refresque el contador con ajax después de votar
+    [] Mejorar la estética del listado de ideas y votos
     [] Poner una opción para que las ideas se publiquen directamente o pasen por borrador y luego se aprueban.
