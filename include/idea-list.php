@@ -19,19 +19,19 @@ function Kfp_Vti_Idea_list()
     // This query get the idea's list
     $the_query = new WP_Query( $args ); 
     if ($the_query->have_posts()) { 
-        $html = '<table>';
+        $html = '<table id="tbl"><tbody>';
         while ($the_query->have_posts()) { 
             $the_query->the_post();
             $post_id = get_the_ID();
             $where = $wpdb->prepare('WHERE post_parent = %d', $post_id);
             $votes = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->posts} {$where}");
             
-            $html .= '<tr><td><b>'. get_the_title() . '</b>'; // Importante lo del get_
+            $html .= '<tr><td>' . get_the_ID() . ' - <b>'. get_the_title() . '</b>'; // Importante lo del get_
             $html .= '<br>' . get_the_content() .'</td>';
-            $html .= '<td nowrap>' . $votes . ' votos - <a href="#" class="click-vote-link"';
+            $html .= '<td>' . $votes . ' votos - <a href="#" class="vote"';
             $html .= 'data-idea-id="' . get_the_ID() . '">Votar</a></td></tr>';
         }
-        $html .= '</table>';
+        $html .= '</tbody></table>';
     } else { 
         $html = '<p>' . _e( 'De momento a nadie se le he ocurrido ninguna idea. ¿Tienes alguna?' ) . '</p>';
     }
@@ -53,15 +53,16 @@ function Kfp_Vti_Idea_List_scripts()
 add_action('wp_ajax_vti_idea_vote', 'Kfp_Vti_Idea_vote');
 add_action('wp_ajax_nopriv_vti_idea_vote', 'Kfp_Vti_Idea_vote');
 function Kfp_Vti_Idea_vote() {
-    if ( defined('DOING_AJAX') && DOING_AJAX){ 
-        // && wp_verify_nonce($_POST['nonce'], 'link_click_vote_' . admin_url( 'admin-ajax.php'))) {
+    if ( defined('DOING_AJAX') && DOING_AJAX 
+        && wp_verify_nonce($_POST['nonce'], 'link_click_vote_' . admin_url( 'admin-ajax.php'))) {
         // Crea un CPT de tipo Voto con la IP del visitante actual
+        $idea_id = filter_input(INPUT_POST, 'idea_id', FILTER_SANITIZE_NUMBER_INT);
         $args = array(
             'post_title' => 'kfp-vti-title',
             'post_content' => $_SERVER['REMOTE_ADDR'],
             'post_type' => 'vti_vote',
             'post_status' => 'publish',
-            'post_parent' => filter_input(INPUT_POST, 'idea_id', FILTER_SANITIZE_NUMBER_INT),
+            'post_parent' => $idea_id,
             'comment_status' => 'closed',
             'ping_status' => 'closed'
         );
@@ -69,7 +70,13 @@ function Kfp_Vti_Idea_vote() {
         // Nos vendría de perlas para grabar los metadatas
         $vote_id = wp_insert_post($args);
         // Devuelve un token para saber que se ha grabado el voto
-        echo "vota";
+        $query = new WP_Query(array(
+            'post_type' => 'vti_vote',
+            'post_parent' => $idea_id
+        ));
+        $count_votes = $query->found_posts;
+        $html = "$count_votes votos - Voté";
+        echo $html;
         die();
     } else {
         die('Error de seguridad');
